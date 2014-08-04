@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>     
+    <string name="action_settings">Settings</string>
+    <string name="app_name">Flickr API Sample</string>
+    <string name="connection_error">Unable to load content. Check your network connection.</string>
+    <string name="check">Check</string>    
+    <string name="menu_item_clear_disc_cache">Clear disc cache</string>  
+    <string name="menu_item_clear_memory_cache">Clear memory cache</string>  
+    <string name="menu_item_pause_on_fling">Pause on fling</string>
+    <string name="menu_item_pause_on_scroll">Pause on scroll</string>    
+    <string name="no_internet_connection">Check your internet conncetion!</string>  
+    <string name="no_results_match_query">There are no photos, that match your tags!</string>
+    <string name="photo_feed">Photo feed</string>   
+	<string name="press_twice_to_exit_app">Press BACK again to exit</string>
+	<string name="search_query_hint">Type keyword to search...</string>
+	<string name="url_get_flickr_photo_feed">https://api.flickr.com/services/feeds/photos_public.gne</string>
+
+</resources>
