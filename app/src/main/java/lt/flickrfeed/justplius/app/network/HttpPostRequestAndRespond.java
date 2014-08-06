@@ -20,7 +20,7 @@ import java.io.InputStreamReader;
 
 public class HttpPostRequestAndRespond {
     
-	private static String TAG = "ServerDbQuerry.java: ";
+	private static String TAG = "HttpPostRequestAndRespond.java: ";
     private String postResult = null;
     private InputStream is = null;    
     
@@ -39,12 +39,13 @@ public class HttpPostRequestAndRespond {
 	        is = entity.getContent();	
 	        
 	    } catch(Exception e){
+
 	        Log.e(TAG, "Error in http connection: "+e.toString());
 	    }
 	    	    
 	    try{
 	    	
-	    	//convert response to string
+	    	// Convert response to string
 	        BufferedReader reader = new BufferedReader(new InputStreamReader(is,"utf-8"),8);
 	        StringBuilder sb = new StringBuilder();
 	        String line = null;
@@ -54,7 +55,9 @@ public class HttpPostRequestAndRespond {
 	        postResult=sb.toString();	
 	        
 	    } catch(Exception e){
+
 	        Log.e(TAG, "Error converting result: "+e.toString());
+
 	    } finally {
 	    	try {
 	    		

@@ -3,6 +3,7 @@ package lt.flickrfeed.justplius.app.imports;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -14,10 +15,6 @@ import java.net.URL;
 
 /**
  * This is a static class for usage in these situations:
- * 
- * - ConnectionChangeReceiver(): determines network 
- * state changes, such as "Network available", "Network is active", 
- * "Network is inactive", "No network available".
  * 
  * - isNetworkAvailable(): performing a runtime network check on main 
  * thread indicating whether phone is connected or not 
@@ -32,7 +29,7 @@ import java.net.URL;
  * network is not present at runtime
  */
 
-final public class NetworkState {
+public class NetworkState {
 	
 	private static String TAG = "NetworkState,java: ";
 	
@@ -40,18 +37,18 @@ final public class NetworkState {
 	private static CheckIfDeviceIsConnectedTask cidict;
 		
 	// Static members for usage of qualify
-	public static boolean isConnected;
+	public static boolean isConnected = true;
 	public static boolean isConnectionBeingHandled = false;
 
-	// Check if device has any available network connection
-	public static boolean isNetworkAvailable(Context context) {
-		
-	    ConnectivityManager connectivityManager 
-	         = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-	    return activeNetworkInfo != null;
-	    
-	}
+    // Check if device has any available network connection
+    public static boolean isNetworkAvailable(Context context) {
+
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null;
+
+    }
 	
 	// Check if device is connected to active internet connection
 	public static boolean hasActiveInternetConnection(Context context) {
@@ -99,7 +96,7 @@ final public class NetworkState {
 			 
 		//save connection status state on static member
 		protected void onPostExecute(Boolean result) {
-			isConnected = result;	
+			isConnected = result;
 		}
 			 
 	}
@@ -115,36 +112,24 @@ final public class NetworkState {
 		cidict.execute(context);
 	}
 	
-	// Receiver handling connection state change events
-	public static class ConnectionChangeReceiver extends BroadcastReceiver {
-
-		@Override
-		public void onReceive( Context context, Intent intent ) {		
-			
-			checkIfDeviceIsConnected(context);
-			
-		} 
-	  
-	}
-	
 	// Method responsible for invoking NetworkUnavailableActivity if 
 	// network is not present at runtime
 	public static void handleIfNoNetworkAvailable(Context context) {
-		
+
 		// Static variable for avoiding simultaneous invoking of 
 		// NetworkUnavailableActivity from different fragments
 		// while inflating few of them at start		
 		if (!isConnectionBeingHandled) {	
 			
 			// Determine if internet connection is available
-		    boolean isNetworkAvailable = isNetworkAvailable(context);
-		    if (!isNetworkAvailable) { 
-		    	
+            isConnected = isNetworkAvailable(context);
+		    if (!isConnected) {
+
 		    	// Global variable for avoiding simultaneous invoking of 
 		    	// NetworkUnavailable Activity from different fragments
 		    	// while inflating few of them at start
-		    	isConnectionBeingHandled = true;      
-		    	
+		    	isConnectionBeingHandled = true;
+
 		    	// Start new activity when internet connection is not present
 		    	Intent intent = new Intent(context.getApplicationContext(), NetworkUnavailableActivity.class);
 		    	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -154,5 +139,5 @@ final public class NetworkState {
 		    
 		}
 	}
-	
+
 }
