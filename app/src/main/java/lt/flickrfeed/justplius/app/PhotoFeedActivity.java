@@ -23,7 +23,8 @@ import lt.justplius.flickrfeed.R;
 
 /**
  * This activity inflates a PhotosListFragment, which handles most of the app job. It also
- * initializes and instantiates ImageLoader (a included library)*/
+ * initializes and instantiates ImageLoader (a included library)
+ */
 
 public class PhotoFeedActivity extends FragmentActivity {
 
@@ -34,14 +35,14 @@ public class PhotoFeedActivity extends FragmentActivity {
     private boolean isFragmentInflated = false;
 
     // Object responsible for images loading
-	protected ImageLoader imageLoader = ImageLoader.getInstance();
+    protected ImageLoader imageLoader = ImageLoader.getInstance();
 
     // Receiver handling internet connection change events
     protected ConnectionChangeReceiver ccr;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
 
@@ -72,13 +73,13 @@ public class PhotoFeedActivity extends FragmentActivity {
             ccr = ConnectionChangeReceiver.getInstance();
 
         }
-	}
-	
-	// Returns instantiated imageLoader to child elements / adapters
-	public ImageLoader getImageLoader(){
+    }
+
+    // Returns instantiated imageLoader to child elements / adapters
+    public ImageLoader getImageLoader() {
 
         return imageLoader;
-	}
+    }
 
 
     @Override
@@ -110,25 +111,25 @@ public class PhotoFeedActivity extends FragmentActivity {
         ccr.unregisterBroadcastReceiver(getApplicationContext());
 
     }
-	
-	// This configuration tuning is custom. You can tune every option, you may tune 
-	// some of them, or you can create default configuration by 
-	// ImageLoaderConfiguration.createDefault(this); method.	
-	public static void initImageLoader(Context context) {		
-		
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-				.threadPriority(Thread.NORM_PRIORITY - 2)
-				.denyCacheImageMultipleSizesInMemory()
-				.diskCacheFileNameGenerator(new Md5FileNameGenerator())
-				.diskCacheSize(50 * 1024 * 1024) // 50 Mb
-				.tasksProcessingOrder(QueueProcessingType.LIFO)
-				.writeDebugLogs() // Remove for release app
-				.build();
-		
-		// Initialize ImageLoader with configuration.
-		ImageLoader.getInstance().init(config);
-		
-	}
+
+    // This configuration tuning is custom. You can tune every option, you may tune
+    // some of them, or you can create default configuration by
+    // ImageLoaderConfiguration.createDefault(this); method.
+    public static void initImageLoader(Context context) {
+
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                .threadPriority(Thread.NORM_PRIORITY - 2)
+                .denyCacheImageMultipleSizesInMemory()
+                .diskCacheFileNameGenerator(new Md5FileNameGenerator())
+                .diskCacheSize(50 * 1024 * 1024) // 50 Mb
+                .tasksProcessingOrder(QueueProcessingType.LIFO)
+                .writeDebugLogs() // Remove for release app
+                .build();
+
+        // Initialize ImageLoader with configuration.
+        ImageLoader.getInstance().init(config);
+
+    }
 
 
     // Disable on back button pressed event by default
@@ -142,14 +143,14 @@ public class PhotoFeedActivity extends FragmentActivity {
     }
 
     // Save information, whether fragment has been inflated
-    protected void onSaveInstanceState (Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
         outState.putBoolean(KEY_IS_FRAGMENT_INFLATED, isFragmentInflated);
     }
 
     // Retrieve information, whether fragment has been inflated
-    protected void onRestoreInstanceState (Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
         if (savedInstanceState != null) {
@@ -161,10 +162,10 @@ public class PhotoFeedActivity extends FragmentActivity {
 
     private void inflateFragment() {
 
-            // inflate new PhotosListFragment
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PhotosListFragment()).commit();
-            isFragmentInflated = true;
+        // inflate new PhotosListFragment
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container, new PhotosListFragment()).commit();
+        isFragmentInflated = true;
 
     }
 

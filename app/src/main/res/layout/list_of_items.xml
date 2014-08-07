@@ -19,5 +19,5 @@
         android:background="@color/black"
         android:clickable="false"
         android:visibility="invisible" />
-    
+
 </RelativeLayout>

@@ -13,50 +13,50 @@ import android.widget.Toast;
 import lt.justplius.flickrfeed.R;
 
 /**
- * This activity shows a view that reminds to turn on internet connection. 
+ * This activity shows a view that reminds to turn on internet connection.
  * If internet is present user pushes button to return to previous activity.
  */
 
 public class NetworkUnavailableActivity extends Activity {
 
-	private Button buttonCheckConnection;
+    private Button buttonCheckConnection;
 
     protected ConnectionChangeReceiver ccr;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		// Static variable used to avoid simultaneous invoking of 
-      	// NetworkUnavailable Activity from different fragments.
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Static variable used to avoid simultaneous invoking of
+        // NetworkUnavailable Activity from different fragments.
         NetworkState.isConnectionBeingHandled = true;
-		
-		setContentView(R.layout.activity_network_unavailable);
-		
-		// Get instances of view objects
-		buttonCheckConnection = (Button) findViewById(R.id.button_check_connection);
-		
-		// Handle responses to events on view objects
-		buttonCheckConnection.setOnClickListener(new OnClickListener(){
 
-			@Override
-			public void onClick(View v) {
+        setContentView(R.layout.activity_network_unavailable);
 
-				// Return to previous activity if internet connection is present
-				if (NetworkState.isConnected) {
+        // Get instances of view objects
+        buttonCheckConnection = (Button) findViewById(R.id.button_check_connection);
 
-					NetworkState.isConnectionBeingHandled = false;
-					finish();
+        // Handle responses to events on view objects
+        buttonCheckConnection.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                // Return to previous activity if internet connection is present
+                if (NetworkState.isConnected) {
+
+                    NetworkState.isConnectionBeingHandled = false;
+                    finish();
                 }
-				
-			}
-			
-		});
+
+            }
+
+        });
 
         // Register connection change receiver
         ccr = ConnectionChangeReceiver.getInstance();
-		
-	}
+
+    }
 
     @Override
     protected void onResume() {
@@ -75,9 +75,9 @@ public class NetworkUnavailableActivity extends Activity {
         ccr.unregisterBroadcastReceiver(getApplicationContext());
 
     }
-	
-	// Disable on back button pressed event by default
-	// and exit from app on back button pressed twice
+
+    // Disable on back button pressed event by default
+    // and exit from app on back button pressed twice
     @Override
     public void onBackPressed() {
 

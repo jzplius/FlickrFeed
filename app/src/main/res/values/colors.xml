@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>    
+<resources>
     <color name="action_bar">#363F56</color>
     <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>    
+    <color name="white">#FFFFFF</color>
 </resources>

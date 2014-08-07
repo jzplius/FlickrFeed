@@ -38,7 +38,7 @@ public class BackStackDoubleTapExit {
 
             @Override
             public void run() {
-                backToExitPressedOnce=false;
+                backToExitPressedOnce = false;
             }
 
         }, 2000);
