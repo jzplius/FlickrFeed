@@ -5,10 +5,6 @@
     <string name="app_name">Flickr feed app</string>
     <string name="connection_error">Unable to load content. Check your network connection.</string>
     <string name="check">Check</string>
-    <string name="menu_item_clear_disc_cache">Clear disc cache</string>
-    <string name="menu_item_clear_memory_cache">Clear memory cache</string>
-    <string name="menu_item_pause_on_fling">Pause on fling</string>
-    <string name="menu_item_pause_on_scroll">Pause on scroll</string>
     <string name="no_internet_connection">Check your internet connection!</string>
     <string name="no_results_match_query">There are no photos, that match your tags!</string>
     <string name="photo_feed">Photo feed</string>
@@ -17,9 +13,7 @@
     <string name="press_twice_to_exit_app">Press BACK again to exit</string>
     <string name="search_query_hint">Type keyword to search...</string>
     <string name="url_get_flickr_photo_feed">https://api.flickr.com/services/feeds/photos_public.gne</string>
-    <string name="url_get_flickr_photo_information">https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&#38;api_key=50450d314435e5e640306e16d6b52a22&#38;format=rest&#38;photo_id=</string>
+    <string name="url_get_flickr_photo_information">https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&amp;api_key=50450d314435e5e640306e16d6b52a22&amp;format=rest&amp;photo_id=</string>
     <string name="title_activity_full_screen_photo">FullScreenPhotoActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

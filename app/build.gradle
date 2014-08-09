@@ -31,11 +31,17 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
-    sourceSets { main { java.srcDirs = ['src/main/java', 'src/instrumentTest/java/'] } }
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', 'src/instrumentTest/java/', 'src/instrumentation/java', 'src/androidTest/java/']
+        }
+    }
+
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/android-support-v4.jar')
     compile 'it.sephiroth.android.library.imagezoom:imagezoom:+'
     compile files('libs/universal-image-loader-1.9.2.jar')
+    compile files('libs/espresso-1.1-bundled.jar')
 }

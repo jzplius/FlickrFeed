@@ -37,13 +37,14 @@
         <activity
             android:name="lt.flickrfeed.justplius.app.PhotoActivity"
             android:label="@string/title_activity_full_screen_photo"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
 
-        <receiver android:name="lt.flickrfeed.justplius.app.imports.ConnectionChangeReceiver"
-            android:label="NetworkConnection">
+        <receiver
+            android:name="lt.flickrfeed.justplius.app.imports.ConnectionChangeReceiver"
+            android:label="NetworkConnection" >
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
     </application>

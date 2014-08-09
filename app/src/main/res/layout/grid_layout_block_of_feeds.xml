@@ -17,7 +17,8 @@
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnCount="1">
+        android:columnCount="1"
+        android:id="@+id/gridLayout">
 
         <FrameLayout
             android:layout_width="match_parent"
