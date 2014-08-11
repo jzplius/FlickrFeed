@@ -37,6 +37,14 @@ import static org.hamcrest.core.IsNot.not;
 @LargeTest
 public class ApplicationTest extends ActivityInstrumentationTestCase2<PhotoFeedActivity> {
 
+    /*
+    In order to commit a test you need to:
+        * edit configurations,
+        * add default test to app scope,
+        * specify specific instrumentation runner as
+            "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
+     */
+
     @SuppressWarnings("deprecation")
     public ApplicationTest() {
 
