@@ -78,8 +78,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<PhotoFeedA
         // would take up screen space
         onView(withId(R.id.action_search))
                 .perform(click())
-                .perform(typeTextIntoFocusedView("coffee"))
-                .perform(pressKey(KeyEvent.KEYCODE_ENTER))
+                .perform(typeTextIntoFocusedView("coffee"), pressKey(KeyEvent.KEYCODE_ENTER))
                 .check(matches(not(hasFocus())));
 
     }
