@@ -10,4 +10,5 @@ Features of an app:
 	* A stylized search bar lets submit tags, on which to filter feed by.
 	* Added internet connection handling. If no internet is present and user commits activity 
 	(f.e. clicks back or on item), he is redirected to informational screen which waits while connection is present.
+	* Added an UI acceptance tests by Espresso. 
 
