@@ -79,8 +79,6 @@ public class FeedItemsListViewAdapter extends ArrayAdapter<FeedItem> {
                 .considerExifParams(true)
                 .displayer(new RoundedBitmapDisplayer(100))
                 .build();
-
-        //mItemsCount = mItems.size() / 4;
     }
 
     // Adapter returns single ListView item (grid_layout_block_of_feeds.xml) populated
@@ -207,10 +205,6 @@ public class FeedItemsListViewAdapter extends ArrayAdapter<FeedItem> {
             }
         }
     }
-
-    /*public void increaseItemsCount(){
-        mItemsCount += 5;
-    }*/
 
     public ArrayList<FeedItem> getItems(){
         return mItems;
