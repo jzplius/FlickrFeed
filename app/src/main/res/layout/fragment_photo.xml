@@ -2,23 +2,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="lt.flickrfeed.justplius.app.PhotoFragment">
+    tools:context="lt.flickrfeed.jzplius.feed_photo.PhotoFragment">
 
     <it.sephiroth.android.library.imagezoom.ImageViewTouch
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@color/action_bar" />
+        android:background="@color/action_bar"
+        android:focusable="false"/>
 
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progressBarPhotoLoad"
-        android:focusableInTouchMode="false"
+        android:focusable="false"
         android:clickable="false"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="end|bottom"
         android:visibility="invisible" />
 
 </FrameLayout>

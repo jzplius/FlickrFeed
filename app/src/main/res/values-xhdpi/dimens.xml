@@ -1,5 +1,4 @@
 <resources>
-
     <dimen name="layout_first_row_shade">50.5dp</dimen>
     <dimen name="layout_first_row_height">202dp</dimen>
     <dimen name="layout_first_row_author_margin_bottom">16dp</dimen>
@@ -7,9 +6,12 @@
     <dimen name="layout_first_row_title_max_width">240dp</dimen>
     <dimen name="layout_first_row_title_max_height">87dp</dimen>
     <dimen name="layout_first_row_title_text_size">21.3sp</dimen>
-    <dimen name="layout_title_max_width_height">155dp</dimen>
+    <dimen name="layout_title_max_width_height">120dp</dimen>
+    <dimen name="layout_title_max_height">64dp</dimen>
     <dimen name="layout_title_margin_bottom">33.3dp</dimen>
     <dimen name="layout_text_size_large">14.6sp</dimen>
+    <dimen name="layout_text_margin">12dp</dimen>
+    <dimen name="layout_text_margin_icon">8dp</dimen>
     <dimen name="layout_text_size">12sp</dimen>
     <dimen name="layout_text_size_medium">11.3sp</dimen>
     <dimen name="layout_text_size_small">8sp</dimen>
@@ -17,7 +19,6 @@
     <dimen name="layout_typical_side">180dp</dimen>
     <dimen name="layout_half_of_typical_side">90dp</dimen>
     <dimen name="layout_action_bar_height">48dp</dimen>
-    <dimen name="layout_icon_size">40.6dp</dimen>
-    <dimen name="layout_icon_overlay">50.6dp</dimen>
-
+    <dimen name="layout_icon_size">42dp</dimen>
+    <dimen name="layout_icon_overlay">50.5dp</dimen>
 </resources>

@@ -1,10 +1,9 @@
-package lt.flickrfeed.justplius.app.feed;
+package lt.flickrfeed.jzplius.feed_items_list;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +23,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import lt.flickrfeed.justplius.app.PhotoActivity;
-import lt.flickrfeed.justplius.app.PhotoFeedActivity;
-import lt.flickrfeed.justplius.app.imports.NetworkState;
-import lt.justplius.flickrfeed.R;
+import lt.flickrfeed.jzplius.feed_item.FeedItem;
+import lt.flickrfeed.jzplius.feed_photo.PhotoActivity;
+import lt.jzplius.flickrfeed.R;
 
 /**
  * This adapter links single ListView item with 4 FeedItems. Adapter returns single
@@ -35,47 +33,36 @@ import lt.justplius.flickrfeed.R;
  * One ListView item (grid_layout_block_of_feeds.xml) consists of block of 4 feeds.
  * ListView item is returned on getView(int, View, ViewGroup) method
  */
-
 public class FeedItemsListViewAdapter extends ArrayAdapter<FeedItem> {
-
-    private static String TAG = "FeedItemsListViewAdapter.java";
-
     // Handles one images' loading complete event
-    private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
-    private ImageLoader imageLoader;
+    private ImageLoadingListener mAnimateDisplay = new AnimateDisplayListener();
+    private ImageLoader mImageLoader;
     // Contains specified image rendering options
-    private DisplayImageOptions optionsNormal;
-    private DisplayImageOptions optionsRounded;
+    private DisplayImageOptions mOptionsNormal;
+    private DisplayImageOptions mOptionsRounded;
 
     // Contains all FeedItems
-    private ArrayList<FeedItem> allItems;
-    private LayoutInflater inflater;
-
-    private Context context;
-
+    private ArrayList<FeedItem> mItems;
+    //private int mItemsCount;
+    private Context mContext;
 
     // Special fonts for TextViews
-    private Typeface tfRobotoMedium;
-    private Typeface tfRobotoRegular;
+    private Typeface mTfRobotoMedium;
+    private Typeface mTfRobotoRegular;
 
+    public FeedItemsListViewAdapter(Context context, ArrayList<FeedItem> items,
+                                    Typeface tfRobotoMedium, Typeface tfRobotoRegular) {
+        super(context, R.layout.grid_layout_block_of_feeds);
 
-    public FeedItemsListViewAdapter(Context _context, ArrayList<FeedItem> _allItems, Typeface _tfRobotoMedium, Typeface _tfRobotoRegular) {
-
-        super(_context, R.layout.grid_layout_block_of_feeds);
-
-        // Instantiate objects
-        this.allItems = _allItems;
-        this.inflater = LayoutInflater.from(_context);
-        context = _context;
-
-        imageLoader = ((PhotoFeedActivity) _context).getImageLoader();
-
+        mItems = items;
+        mContext = context;
         // Set font style
-        tfRobotoMedium = _tfRobotoMedium;
-        tfRobotoRegular = _tfRobotoRegular;
+        mTfRobotoMedium = tfRobotoMedium;
+        mTfRobotoRegular = tfRobotoRegular;
 
+        mImageLoader = ImageLoader.getInstance();
         // Set image rendering option to required ones
-        optionsNormal = new DisplayImageOptions.Builder()
+        mOptionsNormal = new DisplayImageOptions.Builder()
                 .delayBeforeLoading(100)
                 .showImageOnLoading(R.drawable.background_image)
                 .showImageOnFail(R.drawable.buddyicon)
@@ -83,9 +70,8 @@ public class FeedItemsListViewAdapter extends ArrayAdapter<FeedItem> {
                 .cacheOnDisk(true)
                 .considerExifParams(true)
                 .build();
-
         // Set image rendering option to required ones
-        optionsRounded = new DisplayImageOptions.Builder()
+        mOptionsRounded = new DisplayImageOptions.Builder()
                 .showImageForEmptyUri(R.drawable.ic_empty)
                 .showImageOnFail(R.drawable.buddyicon)
                 .cacheInMemory(true)
@@ -94,55 +80,43 @@ public class FeedItemsListViewAdapter extends ArrayAdapter<FeedItem> {
                 .displayer(new RoundedBitmapDisplayer(100))
                 .build();
 
+        //mItemsCount = mItems.size() / 4;
     }
 
     // Adapter returns single ListView item (grid_layout_block_of_feeds.xml) populated
     // with 4 feeds information. One ListView item  consists of block of 4 feeds
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-
-        String urlIcon;
-
+        // View holder for single ListView item
         final ViewHolder holder;
-        int type = getItemViewType(position);
         // Feed items' real position in ListView
         int readPosition;
 
+        // First time initialize ViewHolder, other times retrieve saved one
         if (convertView == null) {
-
             holder = new ViewHolder();
 
-            switch (type) {
-                case 1:
+            // Inflate a "grid_layout_block_of_feeds.xml" layout into ListView's item
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            convertView = inflater.inflate(R.layout.grid_layout_block_of_feeds, parent, false);
 
-                    // Inflate a "grid_layout_block_of_feeds.xml" layout into ListView's item
-                    convertView = inflater.inflate(R.layout.grid_layout_block_of_feeds, parent, false);
-
-                    // Retrieve references to views
-
-                    holder.imageView1 = (ImageView) convertView.findViewById(R.id.imageView1);
-                    holder.textViewTitle1 = (TextView) convertView.findViewById(R.id.textViewTitle1);
-                    holder.textViewAuthor1 = (TextView) convertView.findViewById(R.id.textViewAuthor1);
-                    holder.imageViewIcon = (ImageView) convertView.findViewById(R.id.imageViewIcon);
-
-                    holder.imageView2 = (ImageView) convertView.findViewById(R.id.imageView2);
-                    holder.textViewTitle2 = (TextView) convertView.findViewById(R.id.textViewTitle2);
-                    holder.textViewAuthor2 = (TextView) convertView.findViewById(R.id.textViewAuthor2);
-
-                    holder.imageView3 = (ImageView) convertView.findViewById(R.id.imageView3);
-                    holder.textViewTitle3 = (TextView) convertView.findViewById(R.id.textViewTitle3);
-                    holder.textViewAuthor3 = (TextView) convertView.findViewById(R.id.textViewAuthor3);
-
-                    holder.imageView4 = (ImageView) convertView.findViewById(R.id.imageView4);
-                    holder.textViewTitle4 = (TextView) convertView.findViewById(R.id.textViewTitle4);
-                    holder.textViewAuthor4 = (TextView) convertView.findViewById(R.id.textViewAuthor4);
-
-            }
+            // Retrieve references to views
+            holder.imageView1 = (ImageView) convertView.findViewById(R.id.imageView1);
+            holder.textViewTitle1 = (TextView) convertView.findViewById(R.id.textViewTitle1);
+            holder.textViewAuthor1 = (TextView) convertView.findViewById(R.id.textViewAuthor1);
+            holder.imageViewIcon = (ImageView) convertView.findViewById(R.id.imageViewIcon);
+            holder.imageView2 = (ImageView) convertView.findViewById(R.id.imageView2);
+            holder.textViewTitle2 = (TextView) convertView.findViewById(R.id.textViewTitle2);
+            holder.textViewAuthor2 = (TextView) convertView.findViewById(R.id.textViewAuthor2);
+            holder.imageView3 = (ImageView) convertView.findViewById(R.id.imageView3);
+            holder.textViewTitle3 = (TextView) convertView.findViewById(R.id.textViewTitle3);
+            holder.textViewAuthor3 = (TextView) convertView.findViewById(R.id.textViewAuthor3);
+            holder.imageView4 = (ImageView) convertView.findViewById(R.id.imageView4);
+            holder.textViewTitle4 = (TextView) convertView.findViewById(R.id.textViewTitle4);
+            holder.textViewAuthor4 = (TextView) convertView.findViewById(R.id.textViewAuthor4);
 
             convertView.setTag(holder);
-
         } else {
-
             holder = (ViewHolder) convertView.getTag();
         }
 
@@ -153,25 +127,21 @@ public class FeedItemsListViewAdapter extends ArrayAdapter<FeedItem> {
         // Pair heading ListView item with FeedItem
         holder.imageViewIcon.setVisibility(View.VISIBLE);
         // First row, compared to others, has additional icon
-        urlIcon = allItems.get(readPosition).getUserIconUrl();
-        imageLoader.displayImage(urlIcon, holder.imageViewIcon, optionsRounded, animateFirstListener);
+        String urlIcon = mItems.get(readPosition).getUserIconUrl();
+        mImageLoader.displayImage(urlIcon, holder.imageViewIcon, mOptionsRounded, mAnimateDisplay);
         handleFeed(readPosition++, holder.imageView1, holder.textViewTitle1, holder.textViewAuthor1);
-
         // Pair ListView item with FeedItem
         handleFeed(readPosition++, holder.imageView2, holder.textViewTitle2, holder.textViewAuthor2);
-
         // Pair ListView item with FeedItem
         handleFeed(readPosition++, holder.imageView3, holder.textViewTitle3, holder.textViewAuthor3);
-
         // Pair ListView item with FeedItem
         handleFeed(readPosition, holder.imageView4, holder.textViewTitle4, holder.textViewAuthor4);
 
         return convertView;
     }
 
-    // Static views for each row
+    // Static ViewHolder for each row
     static class ViewHolder {
-
         ImageView imageView1;
         TextView textViewTitle1;
         TextView textViewAuthor1;
@@ -185,61 +155,45 @@ public class FeedItemsListViewAdapter extends ArrayAdapter<FeedItem> {
         ImageView imageView4;
         TextView textViewTitle4;
         TextView textViewAuthor4;
-
     }
 
     // Handles one feed
-    public void handleFeed(final int position, ImageView imageView, TextView textViewTitle, TextView textViewAuthor) {
-
-        String urlPhoto;
-
+    public void handleFeed(int position, ImageView imageView
+            , TextView textViewTitle, TextView textViewAuthor) {
         // Get string URL of photo, which indicates to desired size photo
         // (medium up to 640 px on longest side) in Flick server
-        urlPhoto = allItems.get(position).getPhotoUrl(FeedItem.PhotoSize.SMALL_500.ordinal());
+        String urlPhoto = mItems.get(position).getPhotoUrl(FeedItem.PhotoSize.SMALL_500);
         // Load image with specified urlPhoto URL, with specified image options
-        imageLoader.displayImage(urlPhoto, imageView, optionsNormal, animateFirstListener);
+        mImageLoader.displayImage(urlPhoto, imageView, mOptionsNormal, mAnimateDisplay);
 
         final String finalUrlPhoto = urlPhoto;
-        final String finalPhotoId = allItems.get(position).getPhotoId();
-        final String finalPhotoUrlNoSecret = allItems.get(position).getPhotoUrlNoSecret();
+        final String finalPhotoId = mItems.get(position).getPhotoId();
+        final String finalPhotoUrlNoSecret = mItems.get(position).getPhotoUrlNoSecret();
         // Set a URL of large photo, which is supposed to be downloaded in case if original
         // photo is too large to display
-        final String finalPhotoUrlLarge = allItems.get(position).getPhotoUrl(FeedItem.PhotoSize.LARGE_1024.ordinal());
+        final String finalPhotoUrlLarge = mItems.get(position)
+                .getPhotoUrl(FeedItem.PhotoSize.LARGE_1024);
 
         // Set on view item click event, which opens new activity with original-size photo
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (NetworkState.isNetworkAvailable(context)) {
-
-                    // Passing URL and photo ID parameters to fragment
-                    Intent intent = PhotoActivity.newInstance(context, finalUrlPhoto, finalPhotoId,
-                            finalPhotoUrlNoSecret, finalPhotoUrlLarge);
-
-                    context.startActivity(intent);
-
-                } else {
-
-                    //handle internet connection, if no network available
-                    NetworkState.handleIfNoNetworkAvailable(context);
-
-                }
-
+                // Passing URL and photo ID parameters to fragment
+                Intent intent = PhotoActivity.newInstance(mContext, finalUrlPhoto, finalPhotoId,
+                    finalPhotoUrlNoSecret, finalPhotoUrlLarge);
+                mContext.startActivity(intent);
             }
         });
-
-        textViewTitle.setText(allItems.get(position).getPhotoTitle());
-        textViewTitle.setTypeface(tfRobotoMedium);
-        textViewAuthor.setText(allItems.get(position).getUserName());
-        textViewAuthor.setTypeface(tfRobotoRegular);
-
+        textViewTitle.setText(mItems.get(position).getPhotoTitle());
+        textViewTitle.setTypeface(mTfRobotoMedium);
+        textViewAuthor.setText(mItems.get(position).getUserName());
+        textViewAuthor.setTypeface(mTfRobotoRegular);
     }
 
     // Handles one images' loading complete event, by animating it
-    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
-
-        static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
+    private static class AnimateDisplayListener extends SimpleImageLoadingListener {
+        static final List<String> displayedImages
+                = Collections.synchronizedList(new LinkedList<String>());
 
         @Override
         public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
@@ -254,6 +208,14 @@ public class FeedItemsListViewAdapter extends ArrayAdapter<FeedItem> {
         }
     }
 
+    /*public void increaseItemsCount(){
+        mItemsCount += 5;
+    }*/
+
+    public ArrayList<FeedItem> getItems(){
+        return mItems;
+    }
+
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
@@ -261,12 +223,12 @@ public class FeedItemsListViewAdapter extends ArrayAdapter<FeedItem> {
 
     @Override
     public int getCount() {
-        return allItems.size() / 4;
+        return mItems.size() / 4;
     }
 
     @Override
     public FeedItem getItem(int position) {
-        return allItems.get(position);
+        return mItems.get(position);
     }
 
     @Override
@@ -276,17 +238,8 @@ public class FeedItemsListViewAdapter extends ArrayAdapter<FeedItem> {
 
     @Override
     public int getPosition(FeedItem item) {
-        return allItems.indexOf(item);
+        return mItems.indexOf(item);
     }
 
-    @Override
-    public int getViewTypeCount() {
-        return 1; //Number of types + 1 !!!!!!!!
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return 1;
-    }
 
 }

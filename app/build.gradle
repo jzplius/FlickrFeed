@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply from: "${rootDir}/android_common.gradle"
 
 buildscript {
     repositories {
@@ -9,9 +10,9 @@ android {
     compileSdkVersion 20
     buildToolsVersion '20.0.0'
     defaultConfig {
-        applicationId 'lt.flickrfeed.justplius.app'
+        applicationId 'lt.flickrfeed.jzplius'
         minSdkVersion 14
-        targetSdkVersion 19
+        targetSdkVersion 20
         versionCode 1
         versionName '1.0'
         testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"

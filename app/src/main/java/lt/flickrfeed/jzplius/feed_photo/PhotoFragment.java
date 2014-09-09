@@ -1,12 +1,10 @@
-package lt.flickrfeed.justplius.app;
+package lt.flickrfeed.jzplius.feed_photo;
 
-import android.app.Fragment;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,36 +16,25 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import org.apache.http.NameValuePair;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
-import lt.flickrfeed.justplius.app.feed.FeedItem;
-import lt.flickrfeed.justplius.app.imports.NetworkState;
-import lt.flickrfeed.justplius.app.network.FlickrPhotoInfoXmlParser;
-import lt.justplius.flickrfeed.R;
+import lt.flickrfeed.jzplius.common.DownloadAndParseXML;
+import lt.jzplius.flickrfeed.R;
 
 /**
  * This fragment loads small quality photo. Then while using given EXTRAS
  * it downloads original size photo which is unlimited
  */
-
 public class PhotoFragment extends Fragment {
-
-    private static String TAG = "PhotoFragment.java";
 
     // The fragment initialization parameters
     public static final String ARGUMENT_URL_STRING = "url_string";
@@ -56,65 +43,59 @@ public class PhotoFragment extends Fragment {
     public static final String ARGUMENT_URL_STRING_LARGE_PHOTO = "url_string_large_photo";
 
     // Handles one images' loading complete event
-    private ImageLoadingListener animateFirstListener;
-    protected ImageLoader imageLoader = ImageLoader.getInstance();
-    private DisplayImageOptions optionsNormal;
-    private Drawable imageDrawable;
-
+    protected ImageLoader mImageLoader = ImageLoader.getInstance();
+    private DisplayImageOptions mOptionsNormal;
+    private Drawable mImageDrawable;
     // View elements
-    private ImageViewTouch imageViewTouch;
-    private ProgressBar progressBar;
-    private String urlPhoto;
-    private String urlPhotoNoSecret;
-    private String urlPhotoLarge;
-    private String photoId;
-
-    private boolean isOriginalPhotoDownloaded = false;
+    private ImageViewTouch mImageViewTouch;
+    private ProgressBar mProgressBar;
+    private String mUrlPhoto;
+    private String mUrlPhotoNoSecret;
+    private String mUrlPhotoLarge;
+    private String mPhotoId;
+    private boolean mIsOriginalPhotoDownloaded = false;
+    private DownloadAndParseXML<FlickrPhotoInfoXmlParser, String> mDownloadPhotoInfo;
 
     /**
      * Use this method to create a new instance of
      * this fragment using the provided parameters.
      * returns a new instance of fragment PhotoFragment.
      */
-    public static PhotoFragment newInstance(String urlPhoto, String id, String urlPhotoNoSecret, String urlPhotoLarge) {
-
+    public static PhotoFragment newInstance(String urlPhoto, String id
+            , String mUrlPhotoNoSecret, String mUrlPhotoLarge) {
         PhotoFragment fragment = new PhotoFragment();
         Bundle args = new Bundle();
         args.putString(ARGUMENT_URL_STRING, urlPhoto);
         args.putString(ARGUMENT_PHOTO_ID, id);
-        args.putString(ARGUMENT_URL_STRING_NO_SECRET, urlPhotoNoSecret);
-        args.putString(ARGUMENT_URL_STRING_LARGE_PHOTO, urlPhotoLarge);
-
+        args.putString(ARGUMENT_URL_STRING_NO_SECRET, mUrlPhotoNoSecret);
+        args.putString(ARGUMENT_URL_STRING_LARGE_PHOTO, mUrlPhotoLarge);
         fragment.setArguments(args);
-        return fragment;
 
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //handle internet connection, if no network available
-        NetworkState.handleIfNoNetworkAvailable(getActivity().getApplicationContext());
-
         // Retrieve bundle args
         if (getArguments() != null) {
-
-            urlPhoto = getArguments().getString(ARGUMENT_URL_STRING);
-            urlPhotoNoSecret = getArguments().getString(ARGUMENT_URL_STRING_NO_SECRET);
-            photoId = getArguments().getString(ARGUMENT_PHOTO_ID);
-            urlPhotoLarge = getArguments().getString(ARGUMENT_URL_STRING_LARGE_PHOTO);
-
+            mUrlPhoto = getArguments().getString(ARGUMENT_URL_STRING);
+            mUrlPhotoNoSecret = getArguments().getString(ARGUMENT_URL_STRING_NO_SECRET);
+            mPhotoId = getArguments().getString(ARGUMENT_PHOTO_ID);
+            mUrlPhotoLarge = getArguments().getString(ARGUMENT_URL_STRING_LARGE_PHOTO);
         }
 
         // Set image rendering option to required ones
-        optionsNormal = new DisplayImageOptions.Builder()
+        mOptionsNormal = new DisplayImageOptions.Builder()
                 .delayBeforeLoading(100)
                 .showImageOnFail(R.drawable.buddyicon)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
                 .build();
+
+        mDownloadPhotoInfo = new DownloadPhotoInfo();
 
         // Retain state while on configuration changes
         setRetainInstance(true);
@@ -123,31 +104,25 @@ public class PhotoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_photo, container, false);
-
-        imageViewTouch = (ImageViewTouch) view.findViewById(R.id.imageView);
-        imageViewTouch.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBarPhotoLoad);
+        mImageViewTouch = (ImageViewTouch) view.findViewById(R.id.imageView);
+        mImageViewTouch.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBarPhotoLoad);
 
         // Shows loading progress while original photo is not downloaded
-        if (!isOriginalPhotoDownloaded) {
-
-            progressBar.setVisibility(View.VISIBLE);
+        if (!mIsOriginalPhotoDownloaded) {
+            mProgressBar.setVisibility(View.VISIBLE);
             // Set photo for ImageView
-            imageLoader.displayImage(urlPhoto, imageViewTouch, optionsNormal, new AnimateFirstDisplayListener(progressBar));
+            mImageLoader.displayImage(mUrlPhoto, mImageViewTouch, mOptionsNormal
+                    , new AnimateFirstDisplayListener());
 
             // Execute asynchronous task to load original photo information
-            String url = getString(R.string.url_get_flickr_photo_information) + photoId;
-
+            String url = getString(R.string.url_get_flickr_photo_information) + mPhotoId;
             new GetPhotoInformationTask().execute(url);
-
         } else {
-
             // If photo is already downloaded simple add it to view
-            imageViewTouch.setImageDrawable(imageDrawable);
-
+            mImageViewTouch.setImageDrawable(mImageDrawable);
         }
 
         return view;
@@ -155,61 +130,45 @@ public class PhotoFragment extends Fragment {
 
     // Inner class, that handles one image loading complete event, animates it's inflate
     private class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
-
-        private ProgressBar progressBar;
-
-        AnimateFirstDisplayListener(ProgressBar progressBar) {
-            this.progressBar = progressBar;
-        }
-
         List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 
         @Override
         public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
             if (loadedImage != null) {
-
                 ImageView imageView = (ImageView) view;
                 boolean firstDisplay = !displayedImages.contains(imageUri);
                 if (firstDisplay) {
-
                     // Set delay time to animate after photo has been downloaded
                     FadeInBitmapDisplayer.animate(imageView, 300);
                     displayedImages.add(imageUri);
-
                 }
-                imageDrawable = imageViewTouch.getDrawable();
+                mImageDrawable = mImageViewTouch.getDrawable();
             }
-
         }
     }
 
     // Inner class, that handles original-sized image loading complete event,
     // animates it's inflate
     private class AnimateSecondDisplayListener extends SimpleImageLoadingListener {
-
         @Override
         public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
             if (loadedImage != null) {
-
                 // Inform about to huge original photo and download a smaller
                 // version (up to 1024px on longest side)
                 if (loadedImage.getWidth() >= 4000 || loadedImage.getHeight() >= 3200) {
-
                     Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.photo_too_big_trying_to_load_smaller),
                             Toast.LENGTH_LONG).show();
 
                     // Repeat load of image with smaller resolution
-                    imageLoader.displayImage(urlPhotoLarge, imageViewTouch, optionsNormal,
+                    mImageLoader.displayImage(mUrlPhotoLarge, mImageViewTouch, mOptionsNormal,
                             new AnimateSecondDisplayListener());
 
                     return;
                 }
 
-                progressBar.setVisibility(View.INVISIBLE);
-                isOriginalPhotoDownloaded = true;
-                imageDrawable = imageViewTouch.getDrawable();
+                mProgressBar.setVisibility(View.INVISIBLE);
+                mIsOriginalPhotoDownloaded = true;
+                mImageDrawable = mImageViewTouch.getDrawable();
 
                 List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 
@@ -219,32 +178,24 @@ public class PhotoFragment extends Fragment {
                     FadeInBitmapDisplayer.animate(imageView, 100);
                     displayedImages.add(imageUri);
                 }
-                imageDrawable = imageViewTouch.getDrawable();
+                mImageDrawable = mImageViewTouch.getDrawable();
             }
-
         }
     }
 
     // Implementation of AsyncTask used to get information about photo.
-    private class GetPhotoInformationTask extends AsyncTask<String, Void, ArrayList<NameValuePair>> {
-
+    private class GetPhotoInformationTask extends AsyncTask<String, Void, String> {
         // Actions to be performed in background thread
         @Override
-        protected ArrayList<NameValuePair> doInBackground(String... urls) {
-
+        protected String doInBackground(String... urls) {
+            String TAG = "PhotoFragment.java";
             try {
-
                 // From given URL string's XML parse and return list of NamaValuePairs
-                return loadXmlFromNetwork(urls[0]);
-
+                return mDownloadPhotoInfo.loadXmlFromNetwork(urls[0]);
             } catch (IOException e) {
-
                 Log.e(TAG + " IOException: ", e.toString());
-
             } catch (XmlPullParserException e) {
-
                 Log.e(TAG + "XmlPullParserException: ", e.toString());
-
             }
 
             return null;
@@ -253,85 +204,33 @@ public class PhotoFragment extends Fragment {
         // Actions to be performed in main thread, after actions
         // are completed in background thread
         @Override
-        protected void onPostExecute(ArrayList<NameValuePair> items) {
-
+        protected void onPostExecute(String urlPostfix) {
             // Use list of retrieved FeedItems
-            if (items != null) {
-
-                String oSecret = "";
-                String format = "";
-
-                for (NameValuePair nvp : items) {
-                    switch (nvp.getName()) {
-                        case "originalsecret":
-                            oSecret = nvp.getValue();
-                            break;
-                        case "originalformat":
-                            format = nvp.getValue();
-                            break;
-                    }
-                }
-
+            if (urlPostfix != null) {
                 // Generate URL for original image download
-                String url = urlPhotoNoSecret + "_" + oSecret + "_o." + format;
-
+                String url = mUrlPhotoNoSecret + urlPostfix;
                 // Set photo for ImageView and let imageLoaded download it
-                imageLoader.displayImage(url, imageViewTouch, optionsNormal, new AnimateSecondDisplayListener());
-
+                mImageLoader.displayImage(url, mImageViewTouch, mOptionsNormal,
+                        new AnimateSecondDisplayListener());
             } else {
-
                 // Inform that high quality photo is not present
-                Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.photo_not_available), Toast.LENGTH_LONG).show();
-
+                Toast.makeText(getActivity(),
+                        getActivity().getResources().getString(R.string.photo_not_available), Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    // Downloads XML from flickr feed, parses it and returns list of FeedItems
-    private ArrayList<NameValuePair> loadXmlFromNetwork(String urlString)
-            throws XmlPullParserException, IOException {
+    // Downloads XML from Flickr feed, parses it and returns a
+    // postfix of original photo's URL in String
+    private class DownloadPhotoInfo extends DownloadAndParseXML<FlickrPhotoInfoXmlParser, String> {
 
-        // Parser for XML content
-        FlickrPhotoInfoXmlParser xmlParser = new FlickrPhotoInfoXmlParser();
-        ArrayList<NameValuePair> items = new ArrayList<NameValuePair>();
-        InputStream stream = null;
-
-        try {
-
-            // Download feed from given URL string
-            stream = downloadUrl(urlString);
-            // Parse given stream and return list of FeedItems
-            items = xmlParser.parse(stream);
-
-        } finally {
-
-            if (stream != null) {
-                stream.close();
-            }
-
+        /**
+         * In subclasses override this method to provide specific
+         * XMLPullParser, that extends BaseXmlParser
+         */
+        @Override
+        protected FlickrPhotoInfoXmlParser setParser() {
+            return new FlickrPhotoInfoXmlParser("rsp");
         }
-
-        // XmlParser returns a List of NameValuePair objects.
-        // Each NameValuePair object represents a portion of photo
-        return items;
     }
-
-    // Given a string representation of a URL, sets up a connection and gets
-    // an input stream.
-    private InputStream downloadUrl(String urlString) throws IOException {
-
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(10000 /* milliseconds */);
-        conn.setConnectTimeout(15000 /* milliseconds */);
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
-
-        // Starts the query
-        conn.connect();
-        InputStream stream = conn.getInputStream();
-
-        return stream;
-    }
-
 }

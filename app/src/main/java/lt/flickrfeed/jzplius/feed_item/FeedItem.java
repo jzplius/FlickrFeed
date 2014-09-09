@@ -1,4 +1,4 @@
-package lt.flickrfeed.justplius.app.feed;
+package lt.flickrfeed.jzplius.feed_item;
 
 /**
  * This model class encapsulates feed items, red from flickr feed. Valuable contents:
@@ -7,10 +7,8 @@ package lt.flickrfeed.justplius.app.feed;
  * - contains getters and setters for FeedItem
  * - getPhotoUrl(int): method returns string URL of desired size Photo in flickr server
  */
-
 public class FeedItem {
-
-    /* pair available photo size's with server request letters
+    /** Pair available photo size's with server request letters
     s small square 75x75
     q large square 150x150
     t thumbnail, 100 on longest side
@@ -19,22 +17,19 @@ public class FeedItem {
     z medium 640, 640 on longest side
     c medium 800, 800 on longest side
     b large, 1024 on longest side
+    // o original image, either a jpg, gif or png, depending on source format
     // Original image is downloaded on FeedItems list click, after retrieving additional data
     // about selected photo, as accessing it does not completes with simple postfix letter addition.
-    // o original image, either a jpg, gif or png, depending on source format
     */
     public enum PhotoSize {
-
         SQUARE_75(75), SQUARE_150(150), THUMBNAIL_100(100), SMALL_240(240),
         SMALL_500(500), MEDIUM_640(640), MEDIUM_800(800), LARGE_1024(1024);
 
-        private char letter; //postfix letter added to the end of photo URL
+        private char letter; // Postfix letter added to the end of photo URL
 
-        //pair available sizes strings with letter
+        // Pair available sizes strings with letter
         PhotoSize(int size) {
-
             switch (size) {
-
                 case 75:
                     letter = 's';
                     break;
@@ -63,7 +58,6 @@ public class FeedItem {
                     letter = 'n';
                     break;
             }
-
         }
 
         // Return photo URL with size postfix letter
@@ -71,56 +65,47 @@ public class FeedItem {
             return url + "_" + letter;
         }
     }
-
-    //user's information
+    // User's information
     private String mUserIconUrl;
     private String mUserName;
-
-    //photo's information
+    // Photo's information
     private String mPhotoUrl;
     private String mPhotoUrlNoSecret;
     private String mPhotoTitle;
     private String mPhotoId;
 
-    //constructor
     public FeedItem(String userIcon, String userName, String photoUrl, String photoTitle) {
-
         setUserIconUrl(userIcon);
         setUserName(userName);
         setPhotoUrl(photoUrl);
         setPhotoTitle(photoTitle);
         setPhotoId();
-
     }
 
-    /* Get URL of image with desired size
-     * parameter is ordinal value of PhotoSize's enum
-     * i.e. getPhotoUrl(PhotoSize.SQUARE_75.ordinal())
+    /** Get URL of image with desired size
+     * parameter of PhotoSize's enum
+     * i.e. getPhotoUrl(PhotoSize.SQUARE_75)
      * would return square 75x75 px photo's URL
      */
-    public String getPhotoUrl(int number) {
-
-        String urlString = "";
-
+    public String getPhotoUrl(PhotoSize size) {
+        int number = size.ordinal();
         if (number < 0 || number > 7)
             return null;
 
-        //get URL without postfix
-        urlString = getPhotoUrl();
-        //get URL with postfix
+        // Get URL without postfix
+        String urlString = getPhotoUrl();
+        // Get URL with postfix
         urlString = PhotoSize.values()[number].getPhotoUrlWithLetter(urlString);
-        //add jpg file extension
+        // Add jpg file extension
         urlString += ".jpg";
 
         return urlString;
-
     }
 
-    //getters and setters
+    // Getters and setters
 
     public String getUserIconUrl() {
-
-        //trim the additional parameters of string URL
+        // Trim the additional parameters of string URL
         if (mUserIconUrl.indexOf("?") > 0)
             mUserIconUrl = mUserIconUrl.substring(0, mUserIconUrl.lastIndexOf("?"));
         return mUserIconUrl;
@@ -138,15 +123,14 @@ public class FeedItem {
         mUserName = userName;
     }
 
-    //return URL without file extension
+    // Return URL without file extension
     public String getPhotoUrl() {
         return mPhotoUrl;
     }
 
-    //save URL without file extension and '_b' postfix
+    // Save URL without file extension and '_b' postfix
     public void setPhotoUrl(String photoUrl) {
-
-        //trim file extension and '_b' size postfix
+        // Trim file extension and '_b' size postfix
         if (photoUrl.indexOf("_b.") > 0)
             photoUrl = photoUrl.substring(0, photoUrl.lastIndexOf("_b."));
 
@@ -171,14 +155,12 @@ public class FeedItem {
 
     // Get photo's id by trimming photo URL
     public void setPhotoId() {
-
-        //trim mPhotoUrl secret key followed by '_' postfix
+        // Trim mPhotoUrl secret key followed by '_' postfix
         if (mPhotoUrl.indexOf("_") > 0)
             mPhotoUrlNoSecret = mPhotoUrl.substring(0, mPhotoUrl.lastIndexOf("_"));
 
-        //get id of photo by returning value after last '/' occurrence
+        // Get id of photo by returning value after last '/' occurrence
         if (mPhotoUrlNoSecret.lastIndexOf("/") > 0)
             mPhotoId = mPhotoUrlNoSecret.substring(mPhotoUrlNoSecret.lastIndexOf("/") + 1);
     }
-
 }

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <dimen name="layout_first_row_shade">38dp</dimen>
     <dimen name="layout_first_row_height">152dp</dimen>
     <dimen name="layout_first_row_author_margin_bottom">12dp</dimen>
@@ -8,9 +6,12 @@
     <dimen name="layout_first_row_title_max_width">180dp</dimen>
     <dimen name="layout_first_row_title_max_height">65dp</dimen>
     <dimen name="layout_first_row_title_text_size">16.25sp</dimen>
-    <dimen name="layout_title_max_width_height">105dp</dimen>
+    <dimen name="layout_title_max_width_height">90dp</dimen>
+    <dimen name="layout_title_max_height">42dp</dimen>
     <dimen name="layout_title_margin_bottom">25.5dp</dimen>
     <dimen name="layout_text_size_large">11.25sp</dimen>
+    <dimen name="layout_text_margin">9dp</dimen>
+    <dimen name="layout_text_margin_icon">6dp</dimen>
     <dimen name="layout_text_size">9sp</dimen>
     <dimen name="layout_text_size_medium">7.5sp</dimen>
     <dimen name="layout_text_size_small">6sp</dimen>
@@ -18,9 +19,8 @@
     <dimen name="layout_typical_side">90dp</dimen>
     <dimen name="layout_half_of_typical_side">45dp</dimen>
     <dimen name="layout_action_bar_height">36dp</dimen>
-    <dimen name="layout_icon_size">33dp</dimen>
-    <dimen name="layout_icon_overlay">39dp</dimen>
+    <dimen name="layout_icon_size">31.5dp</dimen>
+    <dimen name="layout_icon_overlay">38dp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-
 </resources>

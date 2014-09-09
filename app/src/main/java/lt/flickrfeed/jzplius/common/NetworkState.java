@@ -1,9 +1,7 @@
-package lt.flickrfeed.justplius.app.imports;
+package lt.flickrfeed.jzplius.common;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -28,54 +26,41 @@ import java.net.URL;
  * - handleIfNoNetworkAvailable(): invokes NetworkUnavailableActivity if
  * network is not present at runtime
  */
-
 public class NetworkState {
-
-    private static String TAG = "NetworkState,java: ";
-
-    // Objects used to determine network state
-    private static CheckIfDeviceIsConnectedTask cidict;
-
-    // Static members for usage of qualify
-    public static boolean isConnected = true;
-    public static boolean isConnectionBeingHandled = false;
+    // Static members for usage of connection state handling
+    public static boolean sIsConnected = true;
+    public static boolean sIsConnectionBeingHandled = false;
 
     // Check if device has any available network connection
     public static boolean isNetworkAvailable(Context context) {
-
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null;
 
+        return activeNetworkInfo != null;
     }
 
     // Check if device is connected to active internet connection
     public static boolean hasActiveInternetConnection(Context context) {
+        final String TAG = "NetworkState.java"; // Remove for release app
 
         if (isNetworkAvailable(context)) {
-
-            Log.d(TAG, "Network available");
+            Log.d(TAG, "Network available"); // Remove for release app
             try {
-
-                //
+                // Connect to google server to check if network is active
                 HttpURLConnection urlc = (HttpURLConnection) (new URL("http://www.google.com").openConnection());
                 urlc.setRequestProperty("User-Agent", "Test");
                 urlc.setRequestProperty("Connection", "close");
                 urlc.setConnectTimeout(1500);
                 urlc.connect();
-                Log.d(TAG, "Network is active");
+                Log.d(TAG, "Network is active"); // Remove for release app
 
                 return (urlc.getResponseCode() == 200);
-
             } catch (IOException e) {
-                Log.e(TAG, "Network is inactive", e);
+                Log.d(TAG, "Network is inactive", e); // Remove for release app
             }
-
         } else {
-
-            Log.d(TAG, "No network available");
-
+            Log.d(TAG, "No network available"); // Remove for release app
         }
 
         return false;
@@ -83,31 +68,23 @@ public class NetworkState {
 
     // Connection state change handler asynchronous task
     private static class CheckIfDeviceIsConnectedTask extends AsyncTask<Context, Void, Boolean> {
-
-        private Context context;
-
         @Override
         protected Boolean doInBackground(Context... params) {
-
-            context = params[0];
-
-            return hasActiveInternetConnection(context);
+            return hasActiveInternetConnection(params[0]);
         }
 
         //save connection status state on static member
         protected void onPostExecute(Boolean result) {
-            isConnected = result;
+            sIsConnected = result;
         }
-
     }
 
     // Convenience method checking if device is connected to
     // internet. It creates and executes a single network test
     // asynchronous task, based on it's context
     public static void checkIfDeviceIsConnected(Context context) {
-
         //check is committed in asynchronous task
-        cidict = new CheckIfDeviceIsConnectedTask();
+        CheckIfDeviceIsConnectedTask cidict = new CheckIfDeviceIsConnectedTask();
         //execute asynchronous task
         cidict.execute(context);
     }
@@ -115,29 +92,23 @@ public class NetworkState {
     // Method responsible for invoking NetworkUnavailableActivity if
     // network is not present at runtime
     public static void handleIfNoNetworkAvailable(Context context) {
-
         // Static variable for avoiding simultaneous invoking of
         // NetworkUnavailableActivity from different fragments
         // while inflating few of them at start
-        if (!isConnectionBeingHandled) {
-
-            // Determine if internet connection is available
-            isConnected = isNetworkAvailable(context);
-            if (!isConnected) {
-
+        if (!sIsConnectionBeingHandled) {
+            if (!sIsConnected) {
                 // Global variable for avoiding simultaneous invoking of
                 // NetworkUnavailable Activity from different fragments
                 // while inflating few of them at start
-                isConnectionBeingHandled = true;
+                sIsConnectionBeingHandled = true;
 
                 // Start new activity when internet connection is not present
-                Intent intent = new Intent(context.getApplicationContext(), NetworkUnavailableActivity.class);
+                Intent intent = new Intent(
+                        context.getApplicationContext(),
+                        NetworkUnavailableActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
-
             }
-
         }
     }
-
 }

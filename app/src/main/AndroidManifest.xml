@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="lt.justplius.flickrfeed" >
+    package="lt.jzplius.flickrfeed" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/CustomActionBarTheme" >
         <activity
-            android:name="lt.flickrfeed.justplius.app.PhotoFeedActivity"
+            android:name="lt.flickrfeed.jzplius.feed_items_list.FeedsListActivity"
             android:configChanges="orientation"
             android:label="@string/photo_feed"
             android:screenOrientation="portrait" >
@@ -22,10 +22,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="lt.flickrfeed.justplius.app.imports.NetworkUnavailableActivity"
+            android:name="lt.flickrfeed.jzplius.common.NetworkUnavailableActivity"
             android:configChanges="orientation"
             android:label="@string/no_internet_connection"
-            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="adjustResize" >
             <intent-filter>
@@ -35,14 +34,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="lt.flickrfeed.justplius.app.PhotoActivity"
+            android:name="lt.flickrfeed.jzplius.feed_photo.PhotoActivity"
             android:label="@string/title_activity_full_screen_photo"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-
         <receiver
-            android:name="lt.flickrfeed.justplius.app.imports.ConnectionChangeReceiver"
-            android:label="NetworkConnection" >
+            android:name="lt.flickrfeed.jzplius.common.ConnectionChangeReceiver"
+            android:label="NetworkConnection"
+            android:enabled="false">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
