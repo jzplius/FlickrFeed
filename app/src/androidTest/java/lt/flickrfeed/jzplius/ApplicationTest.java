@@ -27,10 +27,8 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<FeedsListA
 
     @SuppressWarnings("deprecation")
     public ApplicationTest() {
-
         // This constructor was deprecated - but we want to support lower API levels.
         super("com.google.android.apps.common.testing.ui.testapp", FeedsListActivity.class);
-
     }
 
     @Override
@@ -41,25 +39,20 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<FeedsListA
     }
 
     public void testViewTransparentBackground() {
-
         // On view load transparent background should not be visible
         onView(withId(R.id.view_transparent_background))
                 .check(matches(not(isDisplayed())));
-
     }
 
     public void testOnSearchBarFocusViewTransparentBackground() {
-
         // On search bar icon click, transparent background should be visible
        onView(withId(R.id.action_search))
                 .perform(click());
         onView(withId(R.id.view_transparent_background))
                 .check(matches(isDisplayed()));
-
     }
 
     public void testOnSearchQuerySubmitted() {
-
         // On search query entered and ENTER pressed
         // search bar should be without user focus,
         // so that search results would be shown and no keyboard
@@ -68,7 +61,5 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<FeedsListA
                 .perform(click(), typeText("coffee"))
                 .perform(pressKey(KeyEvent.KEYCODE_ENTER))
                 .check(matches(not(hasFocus())));
-
     }
-
 }
