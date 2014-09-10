@@ -1,4 +1,4 @@
-Download .apk at goo.gl/ottIiV
+Download .apk at http://goo.gl/ottIiV
 
 Functionalities based on screens:
 =========
