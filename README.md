@@ -18,7 +18,6 @@ Technical features:
     * If no network is available then new activity starts, which waits till network connection is active.
     * Network state changes are received by BroadcastReceiver and app knows if connection is active at run-time.
     * Connection state is being checked while attaching all fragments.
-* Allows screen rotation on all screens.
 * The size of desired photo resolution is selected by using ENUM constants.
 * Images are being downloaded and displayed using "Android Universar Image Loader" library.
 * The feed is "never ending", when you scroll to end it downloads a new bunch of latest data based on same URL response.
