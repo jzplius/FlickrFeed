@@ -1,3 +1,5 @@
+Download .apk at goo.gl/ottIiV
+
 Functionalities based on screens:
 =========
 
