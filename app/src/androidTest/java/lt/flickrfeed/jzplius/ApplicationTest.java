@@ -48,7 +48,7 @@ public class ApplicationTest extends ActivityInstrumentationTestCase2<FeedsListA
         // On search bar icon click, transparent background should be visible
        onView(withId(R.id.action_search))
                 .perform(click());
-        onView(withId(R.id.view_transparent_background))
+       onView(withId(R.id.view_transparent_background))
                 .check(matches(isDisplayed()));
     }
 
