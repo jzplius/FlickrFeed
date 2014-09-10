@@ -93,6 +93,7 @@ public class FeedsListFragment extends ListFragment{
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // When 4-th of 5 feed blocks is reached, download additional data
                 if (view.getLastVisiblePosition() >= view.getCount() - 2) {
                     downloadFlickrFeed(mUrl);
                 }
@@ -101,13 +102,6 @@ public class FeedsListFragment extends ListFragment{
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
-                // Determine whether end of ListView was reached and there is a need
-                // to download additional information to extend content
-                /*boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount;
-                if(loadMore) {
-                    // Repeat a download from previous url
-                    downloadFlickrFeed(mUrl);
-                }*/
             }
         });
 
