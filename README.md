@@ -16,8 +16,8 @@ Technical features:
 * Data is taken from Flickr API and default feed.
 * Checks network connection at start and at runtime.
     * If no network is available then new activity starts, which waits till network connection is active.
-     * Network state changes are received by BroadcastReceiver and app knows if connection is active at run-time.
-     * Connection state is being checked while attaching all fragments.
+    * Network state changes are received by BroadcastReceiver and app knows if connection is active at run-time.
+    * Connection state is being checked while attaching all fragments.
 * Allows screen rotation on all screens.
 * The size of desired photo resolution is selected by using ENUM constants.
 * Images are being downloaded and displayed using "Android Universar Image Loader" library.
