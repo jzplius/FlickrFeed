@@ -1,4 +1,4 @@
-Download .apk at http://goo.gl/ug8E8S
+Download .apk at http://goo.gl/M1I3sX
 
 Functionalities based on screens:
 =========
